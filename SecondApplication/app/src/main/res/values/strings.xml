@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">Second Application</string>
+    <string name="area_hint">Area</string>
+    <string name="date_hint">Date (dd.MM.yyyy)</string>
+    <string name="value_hint">Value</string>
+    <string name="save_text">Save</string>
+    <string name="temperature_placeholder">\? °C</string>
+    <string name="conditions_placeholder">unknown conditions</string>
+    <string name="pollution_level_text">Pollution level:</string>
+    <string name="pollution_value">-</string>
+    <string name="more_details_text">View more details</string>
+    <string name="add_pollution_value_text">Add pollution value</string>
+    <string name="view_weather_forecast_text">View weather forecast</string>
+    <string name="date_placeholder">dd.MM.yyyy</string>
+</resources>
