@@ -5,24 +5,36 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -62,6 +74,22 @@ public class DashboardActivity extends AppCompatActivity {
             }
         });
 
+        locationsSpinner = findViewById(R.id.locationSpinner);
+        if(locationsSpinner != null) {
+            locationsSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    String location = locationsSpinner.getSelectedItem().toString();
+                    WeatherWorker worker = new WeatherWorker(location);
+                    worker.start();
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+                }
+            });
+        }
+
         try {
             FileInputStream fileInputStream = openFileInput("locations.bin");
             ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
@@ -71,7 +99,7 @@ public class DashboardActivity extends AppCompatActivity {
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
-        locationsSpinner = findViewById(R.id.locationSpinner);
+
         adapter = new ArrayAdapter<>(getApplicationContext(),
                R.layout.support_simple_spinner_dropdown_item, locationsList);
         locationsSpinner.setAdapter(adapter);
@@ -131,5 +159,66 @@ public class DashboardActivity extends AppCompatActivity {
     public void navigateToForecastList(View view) {
         Intent intent = new Intent(DashboardActivity.this, ListActivity.class);
         startActivity(intent);
+    }
+
+    class WeatherWorker extends Thread {
+        private String location;
+
+        public WeatherWorker(String location) {
+            this.location = location;
+        }
+
+        @Override
+        public void run() {
+            String api = String.format("http://api.openweathermap.org/data/2.5/weather?q=%s&appid=7b10426ee90376dc3d6525f847128b35&units=metric&format=json&lang=en", location);
+            try {
+                URL url = new URL(api);
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                InputStream inputStream = connection.getInputStream();
+                InputStreamReader reader = new InputStreamReader(inputStream);
+                BufferedReader bufferedReader = new BufferedReader(reader);
+
+                StringBuilder stringBuilder = new StringBuilder();
+                String line;
+
+                while((line = bufferedReader.readLine()) != null) {
+                    stringBuilder.append(line);
+                }
+
+                String result = stringBuilder.toString();
+                JSONObject json = new JSONObject(result);
+                JSONObject mainObject = json.getJSONObject("main");
+                double value = mainObject.getDouble("temp");
+                final int temperature = (int)value;
+                JSONArray weatherArray = json.getJSONArray("weather");
+                JSONObject weatherObject = weatherArray.getJSONObject(0);
+                final String description = weatherObject.getString("description");
+                String iconValue = weatherObject.getString("icon");
+                URL imageURL =
+                        new URL(String.format("http://openweathermap.org/img/wn/%s@2x.png", iconValue));
+                HttpURLConnection imageConnection = (HttpURLConnection) imageURL.openConnection();
+                final Bitmap image = BitmapFactory.decodeStream(imageConnection.getInputStream());
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        TextView tempTextView = findViewById(R.id.temperatureTextView);
+                        tempTextView.setText(temperature + "° C");
+
+                        TextView condTextView = findViewById(R.id.conditionsTextView);
+                        condTextView.setText(description);
+
+                        ImageView imageView = findViewById(R.id.imageView);
+                        imageView.setImageBitmap(image);
+                    }
+                });
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }
