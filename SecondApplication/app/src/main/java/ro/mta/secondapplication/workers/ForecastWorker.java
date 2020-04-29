@@ -59,6 +59,11 @@ public class ForecastWorker extends AsyncTask<String, Void, List<WeatherForecast
                     double temperature = Double.parseDouble(tempValue);
                     weather.setTemperature((int)temperature);
 
+                    Element feels = (Element)node.getElementsByTagName("feels_like").item(0);
+                    String feltValue = feels.getAttribute("day");
+                    double felTemp = Double.parseDouble(feltValue);
+                    weather.setFeltTemperature((int)felTemp);
+
                     Element symbol = (Element)node.getElementsByTagName("symbol").item(0);
                     String desc = symbol.getAttribute("name");
                     weather.setConditions(desc);

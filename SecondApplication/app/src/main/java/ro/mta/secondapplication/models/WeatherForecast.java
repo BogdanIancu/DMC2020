@@ -6,6 +6,7 @@ import java.util.Date;
 
 public class WeatherForecast {
     private int temperature;
+    private int feltTemperature;
     private String conditions;
     private Bitmap image;
     private Date date;
@@ -40,5 +41,13 @@ public class WeatherForecast {
 
     public void setDate(Date date) {
         this.date = date;
+    }
+
+    public int getFeltTemperature() {
+        return feltTemperature;
+    }
+
+    public void setFeltTemperature(int feltTemperature) {
+        this.feltTemperature = feltTemperature;
     }
 }

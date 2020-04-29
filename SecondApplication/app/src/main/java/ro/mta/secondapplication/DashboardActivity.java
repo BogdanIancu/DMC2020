@@ -193,6 +193,8 @@ public class DashboardActivity extends AppCompatActivity {
                 JSONObject mainObject = json.getJSONObject("main");
                 double value = mainObject.getDouble("temp");
                 final int temperature = (int)value;
+                final double feelsLike = mainObject.getDouble("feels_like");
+                final int feltTemperature = (int)feelsLike;
                 JSONArray weatherArray = json.getJSONArray("weather");
                 JSONObject weatherObject = weatherArray.getJSONObject(0);
                 final String description = weatherObject.getString("description");
@@ -210,6 +212,9 @@ public class DashboardActivity extends AppCompatActivity {
 
                         TextView condTextView = findViewById(R.id.conditionsTextView);
                         condTextView.setText(description);
+
+                        TextView feelTextView = findViewById(R.id.feelTextView);
+                        feelTextView.setText(String.format("Feels like: %d° C", feltTemperature));
 
                         ImageView imageView = findViewById(R.id.imageView);
                         imageView.setImageBitmap(image);

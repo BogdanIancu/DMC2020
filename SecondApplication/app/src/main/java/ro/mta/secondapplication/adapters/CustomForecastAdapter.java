@@ -38,6 +38,9 @@ public class CustomForecastAdapter extends ArrayAdapter<WeatherForecast> {
         TextView temperatureTextView = convertView.findViewById(R.id.itemTemperatureTextView);
         temperatureTextView.setText(forecast.getTemperature() + "° C");
 
+        TextView feelTextView = convertView.findViewById(R.id.itemFeelTextView);
+        feelTextView.setText(String.format("Feels like %d° C", forecast.getFeltTemperature()));
+
         TextView conditionsTextView = convertView.findViewById(R.id.itemConditionsTextView);
         conditionsTextView.setText(forecast.getConditions());
 
