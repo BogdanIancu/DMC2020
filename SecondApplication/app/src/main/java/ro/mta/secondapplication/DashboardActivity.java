@@ -158,6 +158,9 @@ public class DashboardActivity extends AppCompatActivity {
 
     public void navigateToForecastList(View view) {
         Intent intent = new Intent(DashboardActivity.this, ListActivity.class);
+        if(locationsSpinner != null && locationsSpinner.getSelectedItem() != null) {
+            intent.putExtra("location", locationsSpinner.getSelectedItem().toString());
+        }
         startActivity(intent);
     }
 
