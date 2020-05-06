@@ -46,7 +46,9 @@ public class CustomForecastAdapter extends ArrayAdapter<WeatherForecast> {
 
         TextView dateTextView = convertView.findViewById(R.id.itemDateTextView);
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy");
-        dateTextView.setText(simpleDateFormat.format(forecast.getDate()));
+        if(forecast.getDate() != null) {
+            dateTextView.setText(simpleDateFormat.format(forecast.getDate()));
+        }
 
         ImageView imageView = convertView.findViewById(R.id.itemImageView);
         imageView.setImageBitmap(forecast.getImage());

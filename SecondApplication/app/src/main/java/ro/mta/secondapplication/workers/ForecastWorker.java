@@ -6,6 +6,8 @@ import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.widget.ListView;
 
+import androidx.room.Room;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -22,6 +24,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 import ro.mta.secondapplication.R;
 import ro.mta.secondapplication.adapters.CustomForecastAdapter;
+import ro.mta.secondapplication.models.AppDatabase;
 import ro.mta.secondapplication.models.WeatherForecast;
 
 public class ForecastWorker extends AsyncTask<String, Void, List<WeatherForecast>> {
@@ -35,6 +38,9 @@ public class ForecastWorker extends AsyncTask<String, Void, List<WeatherForecast
 
     @Override
     protected List<WeatherForecast> doInBackground(String... strings) {
+        AppDatabase db = Room.databaseBuilder(context,
+                AppDatabase.class, "database").build();
+
         List<WeatherForecast> list = new ArrayList<>();
         if(strings != null && strings.length > 0) {
             String location = strings[0];
@@ -48,6 +54,7 @@ public class ForecastWorker extends AsyncTask<String, Void, List<WeatherForecast
                 Document xml = builder.parse(inputStream);
 
                 NodeList nodes = xml.getElementsByTagName("time");
+                db.weatherForecastDao().deleteAll();
                 for(int i = 0; i < nodes.getLength(); i++) {
                     WeatherForecast weather = new WeatherForecast();
                     Element node = (Element)nodes.item(i);
@@ -74,10 +81,15 @@ public class ForecastWorker extends AsyncTask<String, Void, List<WeatherForecast
                     Bitmap image = BitmapFactory.decodeStream(imageConnection.getInputStream());
                     weather.setImage(image);
                     list.add(weather);
+                    db.weatherForecastDao().insert(weather);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        }
+        if(list.size() == 0) {
+            List<WeatherForecast> result = db.weatherForecastDao().getAll();
+            list.addAll(result);
         }
         return list;
     }

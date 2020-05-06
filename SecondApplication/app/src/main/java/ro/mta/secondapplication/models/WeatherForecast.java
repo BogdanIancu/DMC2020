@@ -2,10 +2,19 @@ package ro.mta.secondapplication.models;
 
 import android.graphics.Bitmap;
 
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.Ignore;
+import androidx.room.PrimaryKey;
+
 import java.util.Date;
 
+@Entity
 public class WeatherForecast {
+    @PrimaryKey(autoGenerate = true)
+    public int uid;
     private int temperature;
+    @ColumnInfo(name = "felt_temperature")
     private int feltTemperature;
     private String conditions;
     private Bitmap image;
