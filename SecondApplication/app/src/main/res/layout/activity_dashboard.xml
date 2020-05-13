@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".DashboardActivity">
+    <GridLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
     <Spinner android:id="@+id/locationSpinner"
         android:background="@color/colorAccent"
         android:layout_row="0"
@@ -67,7 +70,6 @@
         android:text="@string/add_pollution_value_text"
         android:layout_marginTop="40dp"
         android:layout_gravity="center_horizontal"/>
-
     <Button
         android:id="@+id/viewForecastButton"
         android:layout_row="7"
@@ -77,4 +79,14 @@
         android:layout_marginTop="40dp"
         android:onClick="navigateToForecastList"
         android:text="@string/view_weather_forecast_text" />
-</GridLayout>
+    <Button
+        android:id="@+id/viewChartButton"
+        android:layout_row="8"
+        android:layout_column="0"
+        android:layout_columnSpan="2"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="40dp"
+        android:onClick="navigateToChart"
+        android:text="@string/view_chart" />
+    </GridLayout>
+</ScrollView>
